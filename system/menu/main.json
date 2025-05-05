@@ -1,0 +1,85 @@
+{
+  "menuItems": [
+    {
+      "parent": true,
+      "label": "MAIN NAVIGATION",
+      "icon": "",
+      "link": "",
+      "subMenu": []
+    },
+    {
+      "label": "Dashboard",
+      "icon": "mdi mdi-email-outline",
+      "link": "/dashboard",
+      "subMenu": []
+    },
+    {
+      "label": "Books",
+      "icon": "mdi mdi-message-outline",
+      "link": "app-chat.html",
+      "subMenu": []
+    },
+    {
+      "label": "Books Circulation",
+      "icon": "mdi mdi-calendar-blank-outline",
+      "link": "app-calendar.html",
+      "subMenu": []
+    },
+    {
+      "label": "Members",
+      "icon": "mdi mdi-file-document-outline",
+      "link": "javascript:void(0);",
+      "subMenu": [
+        {
+          "label": "Book",
+          "link": "app-invoice-list.html",
+          "icon": ""
+        },
+        {
+          "label": "Rack",
+          "link": "app-invoice-preview.html",
+          "icon": ""
+        },
+        {
+          "label": "Book Category",
+          "link": "app-invoice-edit.html",
+          "icon": ""
+        },
+        {
+          "label": "Book Barcode",
+          "link": "app-invoice-add.html",
+          "icon": ""
+        }
+      ]
+    },
+    {
+      "parent": true,
+      "label": "Authur",
+      "icon": "",
+      "link": "",
+      "subMenu": []
+    },
+    {
+      "label": "Role",
+      "icon": "mdi mdi-transit-connection-horizontal",
+      "link": "javascript:void(0);",
+      "subMenu": [
+        {
+          "label": "Role",
+          "link": "/user/role",
+          "icon": ""
+        },
+        {
+          "label": "Property Listing",
+          "link": "",
+          "icon": ""
+        },
+        {
+          "label": "Create Deal",
+          "link": "wizard-ex-create-deal.html",
+          "icon": ""
+        }
+      ]
+    }
+  ]
+}
