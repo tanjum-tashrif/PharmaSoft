@@ -1,0 +1,358 @@
+{% extends 'backend/dashboard/main.html' %}
+{% load static %}
+{% block header_resource %}
+<style>
+    .table-responsive {
+        overflow-x: auto;
+        width: 100%;
+    }
+
+    #purchase_table th,
+    #purchase_table td {
+        white-space: nowrap;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row justify-content-center">
+        <div class="col-md-12">
+            <form method="post" id="purchase_form">
+                {% csrf_token %}
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="font-weight-bold">Add New Purchase</h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="form-group col-md-6">
+                                <label for="supplier_name" class="form-label">Supplier</label>
+                                <select name="supplier_name" id="supplier_name" class="form-control">
+                                    <option value="">Select Supplier</option>
+                                    {% for supplier in suppliers %}
+                                    <option value="{{ supplier.id }}">{{ supplier.name }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div class="form-group col-md-6">
+                                <label for="invoice_no" class="form-label">Invoice Number <span
+                                        class="text-danger">*</span></label>
+                                <input type="text" id="invoice_no" name="invoice_no" value="{{ invoice_no }}"
+                                    class="form-control" required>
+                            </div>
+                            <div class="form-group col-md-6">
+                                <label for="details" class="form-label">Details <span
+                                        class="text-danger">*</span></label>
+                                <input type="text" id="details" name="details" class="form-control">
+                            </div>
+                            <div class="form-group col-md-6">
+                                <label for="payment_type" class="form-label">
+                                    Payment Type <span class="text-danger">*</span>
+                                </label>
+                                <select name="payment_type" id="payment_type" class="form-control" required>
+                                    <option value="">Select Payment Type</option>
+                                    {% for key, value in payment_type.items %}
+                                    <option value="{{ key }}">{{ value }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+                        <div class="table-responsive mt-4 mb-0">
+                            <table id="purchase_table" class="table dataTable table-bordered" style="width:100%">
+                                <caption></caption>
+                                <th></th>
+                            </table>
+                        </div>
+                        <div class="p-3 rounded border">
+                            <h4 class="d-flex justify-content-between border-bottom pb-2">Sub Total: <span
+                                    class="text-primary" id="sub_total">0.00</span></h4>
+                            <h4 class="d-flex justify-content-between align-items-center border-bottom pb-2">
+                                Discount :
+                                <span>
+                                    <input type="text" class="form-control pl-5" id="discount"
+                                        placeholder="Discount amount" style="font-size: 1.25rem;">
+                                </span>
+                            </h4>
+                            <h4 class="d-flex justify-content-between border-bottom pb-2">Grand Total: <span
+                                    class="text-success" id="grand_total">0.00</span></h4>
+                            <h4 class="d-flex justify-content-between align-items-center border-bottom pb-2">
+                                Paid Amount:
+                                <span>
+                                    <input type="text" class="form-control pl-5" id="paid_amount"
+                                        placeholder="Enter amount" style="font-size: 1.25rem;">
+                                </span>
+                            </h4>
+                            <h4 class="d-flex justify-content-between">Due Amount: <span class="text-warning"
+                                    id="due_amount">0.00</span></h4>
+                        </div>
+                    </div>
+                    <!-- Hidden inputs to store values that are displayed as spans -->
+                    <input type="hidden" id="hidden_sub_total" name="sub_total">
+                    <input type="hidden" id="hidden_discount" name="discount">
+                    <input type="hidden" id="hidden_grand_total" name="grand_total">
+                    <input type="hidden" id="hidden_paid_amount" name="paid_amount">
+                    <input type="hidden" id="hidden_due_amount" name="due_amount">
+                    <input type="hidden" id="" name="transaction_type" value="{{ transaction_type }}">
+                    <input type="hidden" id="" name="billing_type" value="purchase">
+
+                    <div class="card-footer d-flex justify-content-end">
+                        <a href="" class="btn btn-primary mr-2" id="payment_btn">Payment</a>
+                        <a href="" class="btn btn-secondary" id="save_btn">Save Purchase</a>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock content %}
+
+{% block extra_js %}
+
+<script>
+    // Function to validate input fields
+    function validateField(fieldId, errorMessage) {
+        const field = document.getElementById(fieldId);
+        const formGroup = field.closest('.form-group'); // Find the parent form group
+        
+        // Remove any previous error messages
+        const existingError = formGroup.querySelector('.error-message');
+        if (existingError) {
+            existingError.remove();
+        }
+        field.classList.remove('is-invalid'); // Remove any previous error styles
+
+        // Check if the field is valid
+        if (field.value.trim() === "") {
+            // Add error message
+            const errorElement = document.createElement('div');
+            errorElement.className = 'error-message text-danger mt-1';
+            errorElement.textContent = errorMessage;
+            formGroup.appendChild(errorElement);
+
+            // Highlight the field
+            field.classList.add('is-invalid');
+            return false;
+        }
+        return true;
+    }
+
+    // Handle Payment Button Click
+    document.getElementById('payment_btn').addEventListener('click', function (e) {
+        e.preventDefault();
+
+        // Validate required fields
+        const isSupplierValid = validateField('supplier_name', 'Please select a supplier.');
+        const isPaymentTypeValid = validateField('payment_type', 'Please select a payment type.');
+
+        // Only submit the form if all validations pass
+        if (isSupplierValid && isPaymentTypeValid) {
+            const form = document.getElementById('purchase_form');
+            form.action = "{% url 'purchase_process' %}";
+            form.target = "_blank"; 
+            form.submit();
+        }
+    });
+
+    // Handle Save Purchase Button Click
+    document.getElementById('save_btn').addEventListener('click', function (e) {
+        e.preventDefault();
+
+        // Validate required fields
+        const isSupplierValid = validateField('supplier_name', 'Please select a supplier.');
+        const isPaymentTypeValid = validateField('payment_type', 'Please select a payment type.');
+
+        // Only submit the form if all validations pass
+        if (isSupplierValid && isPaymentTypeValid) {
+            const form = document.getElementById('purchase_form');
+            form.action = "{% url 'save_purchase_data' %}";
+            form.submit();
+        }
+    });
+</script>
+
+
+
+<!-- <script>
+    // Handle Payment Button Click
+    document.getElementById('payment_btn').addEventListener('click', function (e) {
+        e.preventDefault();
+        const form = document.getElementById('purchase_form');
+        form.action = "{% url 'purchase_process' %}";
+        form.target = "_blank"; 
+        form.submit();
+    });
+
+    // Handle Save Purchase Button Click
+    document.getElementById('save_btn').addEventListener('click', function (e) {
+        e.preventDefault();
+        const form = document.getElementById('purchase_form');
+        form.action = "{% url 'save_purchase_data' %}";
+        form.submit();
+    });
+</script> -->
+
+<script>
+   $(document).ready(function () {
+    var table = $('#purchase_table').DataTable({
+        dom: "<'row'<'col-sm-12'tr>>",
+        scrollCollapse: true,
+        scrollX: true,
+        scrollY: true,
+        ordering: true,
+        serverSide: false,
+        data: [],
+        columns: [
+            { title: "Medicine Name", data: "medicine_name", orderable: false },
+            { title: "Batch ID", data: "batch_id", orderable: false },
+            { title: "Expire Date", data: "expire_date", orderable: false },
+            { title: "Box Pattern", data: "box_units", orderable: false },
+            { title: "Box Quantity", data: "box_quantity", orderable: false },
+            { title: "Leaf Pattern", data: "leaf_units", orderable: false },
+            { title: "Supplier Price", data: "supplier_price", orderable: false },
+            { title: "Box MRP", data: "box_mrp", orderable: false },
+            { title: "Supplier Total", data: "total_quantity", orderable: false },
+            { title: "Total Price", data: "total_price", orderable: false },
+            {
+                title: "Action",
+                data: "action",
+                orderable: false,
+                defaultContent: ""
+            }
+        ],
+        pageLength: 10
+    });
+
+    var medicineOptions = '<option value="">Medicine Name</option>';
+
+    function fetchMedicines(supplierId) {
+        $.ajax({
+            url: "{% url 'fetch_medicines_by_supplier' %}",
+            data: { supplier_id: supplierId },
+            success: function (response) {
+                console.log("Success:", response);
+                medicineOptions = '<option value="">Select Medicine</option>';
+                response.medicines.forEach(function (medicine) {
+                    medicineOptions += `<option value="${medicine.id}">${medicine.name}</option>`;
+                });
+
+                // Update existing rows
+                $('.medicine-select').each(function () {
+                    $(this).html(medicineOptions);
+                });
+            },
+            error: function () {
+                alert("Error fetching medicines for the selected supplier.");
+            }
+        });
+    }
+
+    function addRow(isFirstRow = false) {
+        var medicineDropdown = `<select name="medicine_name[]" class="form-control medicine-select">${medicineOptions}</select>`;
+        var boxPatternDropdown = `<select name="box_units[]" class="form-control">
+                                      <option value="">Box Pattern</option>
+                                      {% for unit in box_units %}
+                                          <option value="{{ unit.id }}">{{ unit.name }}</option>
+                                      {% endfor %}
+                                  </select>`;
+        var leafPatternDropdown = `<select name="leaf_units[]" class="form-control">
+                                      <option value="">Leaf Pattern</option>
+                                      {% for pattern in leaf_units %}
+                                          <option value="{{ pattern.id }}">{{ pattern.name }}</option>
+                                      {% endfor %}
+                                  </select>`;
+        var actionButtons = isFirstRow
+            ? '<button type="button" class="btn btn-success add-row">+</button>'
+            : '<button type="button" class="btn btn-success add-row">+</button> ' +
+              '<button type="button" class="btn btn-danger delete-row">-</button>';
+
+        table.row.add({
+            'medicine_name': medicineDropdown,
+            'batch_id': '<input type="text" name="batch_id[]" class="form-control" />',
+            'expire_date': '<input type="date" name="expire_date[]" class="form-control" />',
+            'box_units': boxPatternDropdown,
+            'box_quantity': '<input type="number" name="box_quantity[]" class="form-control" />',
+            'leaf_units': leafPatternDropdown,
+            'total_quantity': '<input type="number" name="total_quantity[]" class="form-control" readonly/>',
+            'supplier_price': '<input type="number" name="supplier_price[]" class="form-control"/>',
+            'box_mrp': '<input type="number" name="box_mrp[]" class="form-control"/>',
+            'total_price': '<input type="number" name="total_price[]" class="form-control" readonly/>',
+            'action': actionButtons
+        }).draw();
+    }
+
+    function updateTotals() {
+        let subTotal = 0;
+        $('#purchase_table tbody tr').each(function () {
+            var totalPrice = parseFloat($(this).find('input[name="total_price[]"]').val()) || 0;
+            subTotal += totalPrice;
+        });
+
+        $('#sub_total').text(subTotal.toFixed(2));
+        $('#hidden_sub_total').val(subTotal.toFixed(2));
+
+        var discount = parseFloat($('#discount').val()) || 0;
+        var grandTotal = subTotal - discount;
+
+        $('#grand_total').text(grandTotal.toFixed(2));
+        $('#hidden_grand_total').val(grandTotal.toFixed(2));
+
+        var paidAmount = parseFloat($('#paid_amount').val()) || 0;
+        var dueAmount = grandTotal - paidAmount;
+
+        $('#hidden_discount').val(discount.toFixed(2));
+        $('#hidden_paid_amount').val(paidAmount.toFixed(2));
+        $('#hidden_due_amount').val(dueAmount.toFixed(2));
+        $('#due_amount').text(dueAmount.toFixed(2));
+    }
+
+    $('#purchase_table').on('input', 'input[name="box_quantity[]"], input[name="supplier_price[]"], input[name="box_mrp[]"]', function () {
+        var row = $(this).closest('tr');
+        var boxQuantity = parseFloat(row.find('input[name="box_quantity[]"]').val()) || 0;
+        var boxPrice = parseFloat(row.find('input[name="supplier_price[]"]').val()) || 0;
+        var boxMRP = parseFloat(row.find('input[name="box_mrp[]"]').val()) || 0;
+
+        var totalQuantity = boxQuantity * boxPrice;
+        row.find('input[name="total_quantity[]"]').val(totalQuantity);
+
+        var totalPrice = boxQuantity * boxPrice;
+        row.find('input[name="total_price[]"]').val(totalPrice);
+
+        updateTotals();
+    });
+
+    $('#discount, #paid_amount').on('input', function () {
+        updateTotals();
+    });
+
+    $('#purchase_table').on('click', '.delete-row', function () {
+        table.row($(this).closest('tr')).remove().draw();
+        updateTotals();
+    });
+
+    $('#purchase_table').on('click', '.add-row', function () {
+        addRow();
+    });
+
+    $('#supplier_name').on('change', function () {
+        var supplierId = $(this).val();
+        if (supplierId) {
+            fetchMedicines(supplierId);
+        } else {
+            medicineOptions = '<option value="">Select Medicine</option>';
+            $('.medicine-select').each(function () {
+                $(this).html(medicineOptions);
+            });
+        }
+    });
+
+    // Add the first row without the delete button
+    addRow(true);
+});
+
+
+
+
+</script>
+
+{% endblock extra_js %}

@@ -1,0 +1,71 @@
+{% extends 'frontend/main.html' %}
+{% load static %}
+{% block content %}
+<div class="container">
+    <div class="row">
+        <div class="col-md-7 col-sm-12 mx-auto">
+            <div class="card pt-4">
+                <div class="card-body">
+                    <div class="text-center mb-5">
+                        <h3>Sign Up</h3>
+                        <p>Please fill the form to register.</p>
+                    </div>
+                    <form action="#" method="post" id="signup_form">
+                        {% csrf_token %}
+                        <div class="row">
+                            <div class="col-md-6 col-12">
+                                <div class="form-group">
+                                    <label for="first-name-column">First Name</label>
+                                    <input type="text" id="first-name-column" class="form-control" name="first_name" required>
+                                    <!-- <p>here the error</p> -->
+                                </div>
+                            </div>
+                            <div class="col-md-6 col-12">
+                                <div class="form-group">
+                                    <label for="last-name-column">Last Name</label>
+                                    <input type="text" id="last-name-column" class="form-control" name="last_name" required>
+                                </div>
+                            </div>
+                            <div class="col-md-6 col-12">
+                                <div class="form-group">
+                                    <label for="username-column">Username</label>>
+                                    <input type="text" id="username-column" class="form-control" name="username" required>
+                                </div>
+                            </div>
+                            <div class="col-md-6 col-12">
+                                <div class="form-group">
+                                    <label for="email-id-column">Email</label>
+                                    <input type="email" id="email-id-column" class="form-control" name="email" required>
+                                </div>
+                            </div>
+                            <div class="col-md-6 col-12">
+                                <div class="form-group">
+                                    <label for="password-column">Password</label>
+                                    <input type="password" id="password-column" class="form-control" name="password" required>
+                                </div>
+                            </div>
+                            <div class="col-md-6 col-12">
+                                <div class="form-group">
+                                    <label for="confirm-password-column">Confirm Password</label>
+                                    <input type="password" id="confirm-password-column" class="form-control" name="confirm_password" required>
+                                </div>
+                            </div>
+                        </diV>
+
+                        <a href="{% url 'signin' %}">Have an account? Login</a>
+                        <div class="clearfix">
+                            <button class="btn btn-primary float-right">Submit</button>
+                        </div>
+                    </form>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+
+{% endblock extra_js %}

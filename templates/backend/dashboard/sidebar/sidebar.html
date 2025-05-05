@@ -1,0 +1,223 @@
+{% load static %}
+<div id="sidebar" class='active'>
+    <div class="sidebar-wrapper active">
+        <div class="sidebar-header">
+            <!-- <img src="{% static 'assets/images/logo.svg' %}" alt="" srcset=""> -->
+            <!-- <a href="#"><p>PharmaSoft</p></a> -->
+            <a href="{% url 'dashboard' %}"><p>PharmaSoft</p></a>
+        </div>
+        <div class="sidebar-menu">
+            <ul class="menu">
+
+
+                <li class='sidebar-title'>Main Menu</li>
+
+
+
+                <li class="sidebar-item ">
+                    <a href="{% url 'dashboard' %}" class='sidebar-link'>
+                        <i data-feather="home" width="20"></i>
+                        <span>Dashboard</span>
+                    </a>
+
+                </li>
+
+
+
+
+                <!-- <li class="sidebar-item  has-sub">
+                    <a href="#" class='sidebar-link'>
+                        <i data-feather="triangle" width="20"></i>
+                        <span>Customer</span>
+                    </a>
+
+                    <ul class="submenu ">
+
+                        <li>
+                            <a href="#">Add Customer</a>
+                        </li>
+
+                        <li>
+                            <a href="#">Customer List</a>
+                        </li>
+
+                    
+                    </ul>
+
+                </li> -->
+
+
+
+
+                <li class="sidebar-item  has-sub">
+                    <a href="#" class='sidebar-link'>
+                        <i data-feather="briefcase" width="20"></i>
+                        <span>Supplier</span>
+                    </a>
+
+                    <ul class="submenu ">
+
+                        <li>
+                            <a href="{% url 'supplier_list' %}">Supplier List</a>
+                        </li>
+
+                        <li>
+                            <a href="{% url 'supplier_add' %}">Add Supplier</a>
+                        </li>
+
+                    </ul>
+
+                </li>
+
+                <li class="sidebar-item  has-sub">
+                    <a href="#" class='sidebar-link'>
+                        <i data-feather="file-text" width="20"></i>
+                        <!-- <i data-feather="briefcase" width="20"></i> -->
+                        <span>Invoice</span>
+                    </a>
+
+                    <ul class="submenu ">
+
+                        <li>
+                            <a href="{% url 'add_invoice' %}">Add Invoice</a>
+                        </li>
+
+                        <li>
+                            <a href="{% url 'ivnoice_list' %}">Invoice List</a>
+                        </li>
+
+                    </ul>
+
+                </li>
+
+                <li class="sidebar-item">
+                    <a href="{% url 'payment_list' %}" class='sidebar-link'>
+                        <i data-feather="home" width="20"></i>
+                        <span>Payment</span>
+                    </a>
+
+                </li> 
+
+
+
+
+                <li class='sidebar-title'>Medicine</li>
+
+
+
+                <li class="sidebar-item  has-sub">
+                    <a href="#" class='sidebar-link'>
+                        <i data-feather="package" width="20"></i>
+                        <span>Medicine</span>
+                    </a>
+
+                    <ul class="submenu ">
+
+                    <li>
+                            <a href="{% url 'medicine_details' %}">Medicine Details</a>
+                        </li>
+                        <li>
+                            <a href="{% url 'medicine_list' %}">Medicine List</a>
+                        </li>
+                        <li>
+                            <a href="{% url 'medicine_add' %}">Add Medicine</a>
+                        </li>
+
+                        <li>
+                            <a href="{% url 'category_add' %}">Add Category</a>
+                        </li>
+
+                        <li>
+                            <a href="{% url 'category_list' %}">Category List</a>
+                        </li>
+
+                        <li>
+                            <a href="{% url 'unit_add' %}">Add Unit</a>
+                        </li>
+
+                        <li>
+                            <a href="{% url 'unit_list' %}">Unit List</a>
+                        </li>
+
+                        <li>
+                            <a href="{% url 'type_add' %}">Add Type</a>
+                        </li>
+
+                        <li>
+                            <a href="{% url 'type_list' %}">Type List</a>
+                        </li>
+                        
+                        <li>
+                            <a href="{% url 'leaf_add' %}">Add Leaf</a>
+                        </li>
+                        
+                        <li>
+                            <a href="{% url 'leaf_list' %}">Leaf List</a>
+                        </li>
+
+                    </ul>
+
+                </li>
+
+
+                <li class="sidebar-item  has-sub">
+                    <a href="#" class='sidebar-link'>
+                        <i data-feather="shopping-cart" width="20"></i>
+                        <span>Purchase</span>
+                    </a>
+
+                    <ul class="submenu ">
+
+                        <li>
+                            <a href="{% url 'add_purchase' %}">Add Purchase</a>
+                        </li>
+
+                        <li>
+                            <a href="{% url 'purchase_list' %}">Purchase List</a>
+                        </li>
+                    </ul>
+
+                </li>
+
+                {% if user_role_slug != 'seller' %}
+                     
+                <li class='sidebar-title'>Auth User</li>
+
+                <li class="sidebar-item  has-sub">
+                    <a href="#" class='sidebar-link'>
+                        <i data-feather="user" width="20"></i>
+                        <span>User</span>
+                    </a>
+
+                    <ul class="submenu ">
+
+                        <li>
+                            <a href="{% url 'user_list' %}">User List</a>
+                        </li>
+                        <li>
+                            <a href="{% url 'user_add' %}">User Add</a>
+                        </li>
+
+                        <li>
+                            <a href="{% url 'role_list' %}">Role List</a>
+                        </li>
+
+                        <li>
+                            <a href="{% url 'role_add' %}">Role Add</a>
+                        </li>
+
+                        <!-- <li>
+                            <a href="#">Forgot Password</a>
+                        </li> -->
+
+                    </ul>
+
+                </li>
+
+                {% endif %}
+
+            </ul>
+        </div>
+        <button class="sidebar-toggler btn x"><i data-feather="x"></i></button>
+    </div>
+</div>

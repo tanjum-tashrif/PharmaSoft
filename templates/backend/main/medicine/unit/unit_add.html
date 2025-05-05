@@ -1,0 +1,42 @@
+{% extends 'backend/dashboard/main.html' %}
+{% load static %}
+
+{% block content %}
+
+<div class="container-fluid">
+    <div class="row justify-content-center">
+        <div class="col-md-10">
+            <form action="#" method="post" id="user_form">
+                {% csrf_token %}
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="font-weight-bold">Add New Unit</h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="form-group col-md-6">
+                                <div class="form-label text-uppercase">Unit Name <span class="text-danger">*</span></div>
+                                <input type="text" name="name" class="form-control required" placeholder="Unit Name(e.g BOX_10, Pack)">
+                                {% if errors %}
+                                <div class="text-danger">{{ errors.name.0 }}</div>
+                                {% endif %}
+                            </div>
+
+                            <div class="form-group col-md-6">
+                                <div class="form-label text-uppercase">Unit Quntity <span class="text-danger">*</span></div>
+                                <input type="text" name="unit_value" class="form-control required" placeholder="Unit Quantity(e.g 10)">
+                            </div>
+                            
+                            <div class="form-group col-md-4 mb-0 mt-3"></div>
+                                <button class="btn btn-sm btn-primary" type="submit" style="width: 30%; margin-top: 20px;">Save</button>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+{% endblock content %}

@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+{% load static %}
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - PharmaSoft Admin Dashboard</title>
+
+    <link rel="stylesheet" href="{% static 'assets/css/bootstrap.css' %}">
+
+    <link rel="stylesheet" href="{% static 'assets/vendors/chartjs/Chart.min.css' %}">
+
+    <link rel="stylesheet" href="{% static 'assets/vendors/perfect-scrollbar/perfect-scrollbar.css' %}">
+    <link rel="stylesheet" href="{% static 'assets/css/app.css' %}">
+    <!-- <link rel="shortcut icon" href="{% static 'assets/images/favicon.svg' %}" type="image/x-icon"> -->
+
+    <!-- new vendor -->
+    <link rel="stylesheet" href="{% static 'new_assets/vendor/libs/typeahead-js/typeahead.css' %}">
+    <link rel="stylesheet" href="{% static 'new_assets/vendor/libs/datatables-bs5/datatables.bootstrap5.css' %}">
+    <link rel="stylesheet" href="{% static 'new_assets/vendor/libs/datatables-buttons-bs5/buttons.bootstrap5.css' %}">
+    <link rel="stylesheet" href="{% static 'new_assets/vendor/libs/apex-charts/apex-charts.css' %}">
+    <link rel="stylesheet" href="{% static 'new_assets/vendor/libs/swiper/swiper.css' %}">
+
+    <link rel="stylesheet" href="{% static 'new_assets/vendor/fonts/fontawesome.css' %}">
+    <link rel="stylesheet" href="{% static 'new_assets/vendor/css/custom.css' %}">
+
+    {% block header_resource %}
+    {% endblock %}
+    <style>
+        .star-danger{
+            font-size: 2rem; /* Increase the size of the asterisk */
+            vertical-align: middle; /* Align the asterisk with the text */
+        }
+    </style>
+
+</head>
+
+<body>
+    <div id="app">
+
+        {% include 'backend/dashboard/sidebar/sidebar.html' %}
+
+        <div id="main">
+
+            {% include 'backend/dashboard/navbar/navbar.html' %}
+
+            <div class="col-md-12" style="padding-left: 1.2rem;">
+                {% if messages %}
+                    <div class='custom_alert'>
+                        {% for message in messages %}
+                            {% if message.tags == 'success' %}
+                                <div class='alert alert-success alert-dismissible fade show' role='alert'>
+                                    {{ message }}
+                                    <button type='button' class='close' data-dismiss='alert' aria-label='Close'>
+                                        <span aria-hidden='true'>×</span>
+                                    </button>
+                                </div>
+                            {% elif message.tags == 'error' %}
+                                <div class='alert alert-danger alert-dismissible fade show' role='alert'>
+                                    {{ message }}
+                                    <button type='button' class='close' data-dismiss='alert' aria-label='Close'>
+                                        <span aria-hidden='true'>×</span>
+                                    </button>
+                                </div>
+                            {% elif message.tags == 'info' %}
+                                <div class='alert alert-info alert-dismissible fade show' role='alert'>
+                                    {{ message }}
+                                    <button type='button' class='close' data-dismiss='alert' aria-label='Close'>
+                                        <span aria-hidden='true'>×</span>
+                                    </button>
+                                </div>
+                            {% endif %}
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            </div>
+            <!-- <div class="col-md-12" style="padding-left: 1.2rem;">
+                if success : 
+                <div class="alert alert-success alert-dismissible" role="alert">
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span
+                            aria-hidden="true">×</span></button>
+                    Successfully Saved
+                </div>
+            </div>
+
+            <div class="col-md-12" style="padding-left: 1.2rem;">
+
+                elif error : 
+
+                <div class="alert alert-danger alert-dismissible" role="alert">
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span
+                            aria-hidden="true">×</span></button>
+                    {{ errors }}
+                </div>
+            </div>
+
+            <div class="col-md-12" style="padding-left: 1.2rem;">
+                elif info == : 
+                <div class="alert alert-info alert-dismissible" role="alert">
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span
+                            aria-hidden="true">×</span></button>
+                    sure solve
+                </div>
+            </div> -->
+
+            {% block content %}
+            {% endblock %}
+
+            <footer>
+                <div class="footer clearfix mb-0 text-muted">
+                    <div class="float-left">
+                        <p>2024 &copy; NITER CSE</p>
+                    </div>
+                    <div class="float-right">
+                        <p>Crafted with <span class='text-danger'><i data-feather="heart"></i></span> by <a
+                                href="https://www.linkedin.com/in/shahoraiar-hossain/">Shaoraiar</a></p>
+                    </div>
+                </div>
+            </footer>
+        </div>
+    </div>
+    <script src="{% static 'assets/js/feather-icons/feather.min.js' %}"></script>
+    <script src="{% static 'assets/vendors/perfect-scrollbar/perfect-scrollbar.min.js' %}"></script>
+    <script src="{% static 'assets/js/app.js' %}"></script>
+
+    <script src="{% static 'assets/vendors/chartjs/Chart.min.js' %}"></script>
+    <script src="{% static 'assets/vendors/apexcharts/apexcharts.min.js' %}"></script>
+    <script src="{% static 'assets/js/pages/dashboard.js' %}"></script>
+
+    <script src="{% static 'assets/js/main.js' %}"></script>
+
+    <!-- new vendor  JS-->
+    <script src="{% static 'new_assets/vendor/libs/jquery/jquery.js' %}"></script>
+    <script src="{% static 'new_assets/vendor/libs/datatables-bs5/datatables-bootstrap5.js' %}"></script>
+
+    {% block extra_js %}
+    {% endblock %}
+</body>
+
+</html>

@@ -1,0 +1,100 @@
+{% extends 'backend/dashboard/main.html' %}
+{% load static %}
+
+{% block header_resource %}
+    
+<style>
+    tbody td:nth-child(2),
+    thead th:nth-child(2) {
+        position: sticky;
+        left: 0;
+        z-index: 1;
+        background-color: #f1f1f1;
+        /* background-color: #fdf7f7; */
+    }
+</style>
+    {% endblock %}
+
+{% block content %}
+
+<div class="container-xxl flex-grow-1 container-p-y">
+
+    <div class="col-lg-12 grid-margin stretch-card"></div>
+    <div class="card">
+        <div class="card-header">
+            <div class="d-flex justify-content-between align-items-center border-bottom pb-3">
+                <h4 class="card-title m-0">Users</h4>
+                <a href="{% url 'user_add' %}" class="btn btn-primary" 
+                   style="height: 40px; width: 200px; display: flex; align-items: center; justify-content: center;">
+                    Add New User
+                </a>
+            </div>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table id="user_table" class="table dataTable table-bordered" style="width:100%">
+                    <caption></caption>
+                    <th></th>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+{% endblock content %}
+
+{% block extra_js %}
+<script>
+    $(document).ready(function () {
+        var table = $('#user_table').DataTable(
+            {
+                dom: "<'row'<'col-sm-8'l><'col-sm-4'f>>" +
+                    "<'row'<'col-sm-12'tr>>" +
+                    "<'row'<'col-sm-5'i><'col-sm-7'p>>",
+
+                fixedColumns: {
+                    start: 1,
+                    end: 1
+                },
+                scrollCollapse: true,
+                scrollX: true,
+                scrollY: true,
+                ordering: true,
+                serverSide: true,
+                ajax: {
+                    url: '{% url "user_list" %}',
+                    type: 'POST',  // Change to POST
+                    data: function (d) {
+                        d.csrfmiddlewaretoken = '{{ csrf_token }}'; // Include CSRF token
+                        d.search_string = d.search.value; // Pass the search term
+                        return d;
+                    }
+                },
+
+
+                "columns": [
+                    { title: "id", data: "count", "orderable": false, type: "string" },
+                    { title: "Name", data: "name", "orderable": false, type: "string" },
+                    { title: "First Name", data: "first_name", "orderable": false, type: "string" },
+                    { title: "Last Name", data: "last_name", "orderable": false, type: "string" },
+                    { title: "Email", data: "email", "orderable": false, type: "string" },
+                    { title: "Phone", data: "phone", "orderable": false, type: "string" },
+                    { title: "Role", data: "user_role", "orderable": false, type: "string" },
+                    { title: "Status", data: "status", "orderable": false, type: "string" },
+                    { title: "Action", "data": "action", "orderable": false },
+
+                ],
+                "pageLength": 10 // change the page length option to display 50 rows per page
+            });
+
+    });
+
+
+</script>
+{% endblock extra_js %}
+
+
+
+
+

@@ -1,0 +1,210 @@
+{% extends 'backend/dashboard/main.html' %}
+{% load static %}
+{% block header_resource %}
+<style>
+  .equal-width-table th,
+  .equal-width-table td {
+    width: 20%;
+    /* Adjust based on the number of columns */
+    text-align: center;
+    /* Center align text */
+    vertical-align: middle;
+    /* Center align vertically */
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+
+<div class="row justify-content-center">
+  <div class="col-12 col-lg-10 col-xl-10">
+    <div class="header p-0 ml-0 mr-0 shadow-none">
+      <div class="header-body">
+        <div class="row align-items-center">
+          <div class="col">
+            <h6 class="header-pretitle fs-10 font-weight-bold text-muted text-uppercase mb-1">
+              Payments
+            </h6>
+            <h1 class="header-title fs-25 font-weight-600">
+              Invoice No: {{ invoice_no }}
+            </h1>
+          </div>
+          <div class="col-auto">
+            <a href="{% url 'ivnoice_list' %}" class="btn btn-secondary ml-2">
+              <i class="fa-solid fa-list"></i> Invoice List
+          </a>
+            <a href="?download=pdf" class="btn btn-success ml-2">
+              <i class="fa-solid fa-file-arrow-down"></i> Download PDF
+          </a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card card-body p-5">
+      <div class="" id="printArea">
+        <div class="row">
+          <div class="col text-center">
+            <h1>PharmaSoft</h1>
+            <h4 class="mb-0 font-weight-bold">PharmaSoft Admin Panel</h4>
+            <p class="text-muted mb-5">Invoice: {{ invoice_no }}</p>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-12 col-md-6">
+            <h4 class="text-uppercase text-success font-weight-600">
+              Billing From
+            </h4>
+            <p class="text-muted mb-4">
+              <strong class="text-body fs-16">{{ user_name }}</strong>
+              <br />
+              Phone: {{ user_phone }}
+            </p>
+            <h6 class="text-uppercase text-muted fs-12 font-weight-600">
+              Nabinagar, Savar
+            </h6>
+            <h6 class="text-uppercase text-muted fs-12 font-weight-600">
+              Dhaka, Bangladesh
+            </h6>
+          </div>
+          <div class="col-12 col-md-6 text-md-right">
+            <h4 class="text-uppercase text-success font-weight-600">
+              Billing To
+            </h4>
+
+            <p class="text-muted mb-4">
+              <strong class="text-body fs-16">{{ customer_name }}</strong>
+              <br />
+              <!-- Phone: {{ supplier_phone }} <br /> -->
+              <!-- {{ supplier_address }} -->
+                Savar, Dhaka
+            </p>
+            <h6 class="text-uppercase text-muted fs-12 font-weight-600">
+              Date
+            </h6>
+            <p class="mb-4"><time datetime=""> {{ created_at }}</time></p>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-12">
+            <div class="table-responsive">
+              <table class="table my-4 equal-width-table">
+                <thead>
+                  <tr>
+                    <th class="px-0 bg-transparent ">
+                      <span class="h6 font-weight-bold">Sl</span>
+                    </th>
+                    <th class="px-0 bg-transparent">
+                      <span class="h6 font-weight-bold">Medicine Name</span>
+                    </th>
+                    <th class="px-0 bg-transparent">
+                      <span class="h6 font-weight-bold">Expire Date</span>
+                    </th>
+                    <th class="px-0 bg-transparent">
+                      <span class="h6 font-weight-bold">QTY(BOX)</span>
+                    </th>
+                    <th class="px-0 bg-transparent">
+                      <span class="h6 font-weight-bold">Total Amount</span>
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for item in invoice_items %}
+                  <tr>
+                    <td class="px-0">{{ forloop.counter }}</td>
+                    <td class="px-0">{{ item.medicine_name }}</td>
+                    <td class="px-0">{{ item.medicine_expire }}</td>
+                    <td class="px-0">{{ item.quantity }}</td>
+                    <td class="px-0">{{ item.total_price }}</td>
+                  </tr>
+                  {% endfor %}
+
+                  <tr>
+                    <td class="px-0 border-top border-top-2 text-right" colspan="4">
+                      <strong>Sub Total</strong>
+                    </td>
+                    <td class="px-0 border-top border-top-2">
+                      <span class="fs-16 font-weight-600"> {{ sub_total }} </span>
+                    </td>
+                  </tr>
+
+                  <tr>
+                    <td class="px-0 border-top border-top-2 text-right" colspan="4">
+                      <strong>Paid Amount</strong>
+                    </td>
+                    <td class="px-0 border-top border-top-2">
+                      <span class="fs-16 font-weight-600"> {{ paid_amount }} </span>
+                    </td>
+                  </tr>
+
+                  <tr>
+                    <td class="px-0 border-top border-top-2 text-right" colspan="4">
+                      <strong>Due Total</strong>
+                    </td>
+                    <td class="px-0 border-top border-top-2">
+                      <span class="fs-16 font-weight-600"> {{ due_amount }} </span>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <!-- <hr class="my-5" /> -->
+            <h6 class="text-uppercase font-weight-bold">Comments</h6>
+            <p class="text-muted mb-0">Print Date : {{ today_date }}</p>
+            <p class="text-muted mb-0">thank you</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock content %} 
+
+{% block extra_js %} 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.4.0/jspdf.umd.min.js"></script>
+
+<script>
+  document.querySelector('.btn-success').addEventListener('click', function (e) {
+      e.preventDefault();
+      const { jsPDF } = window.jspdf;
+      const printArea = document.getElementById('printArea');
+
+      // Use html2canvas to capture the content
+      html2canvas(printArea).then(canvas => {
+          const pdf = new jsPDF('p', 'mm', 'a4'); // Portrait orientation, millimeters, A4 size
+          
+          // Define page dimensions (A4 size in mm)
+          const pageWidth = 210; // A4 width in mm
+          const pageHeight = 297; // A4 height in mm
+
+          // Define margins in mm (2 cm = 20 mm)
+          const margin = 20; // 2 cm margin on all sides
+
+          // Calculate the available space after subtracting the margins
+          const availableWidth = pageWidth - (2 * margin);
+          const availableHeight = pageHeight - (2 * margin);
+
+          // Scale the content to fit the available space
+          const imgWidth = availableWidth;
+          const imgHeight = (canvas.height * imgWidth) / canvas.width;
+
+          // If the height exceeds available space, scale it down to fit
+          let scaleFactor = 1;
+          if (imgHeight > availableHeight) {
+              scaleFactor = (availableHeight * 0.8) / imgHeight;
+          }
+
+          // Add image to the PDF, with 20mm margin on each side
+          pdf.addImage(canvas, 'PNG', margin, margin, imgWidth * scaleFactor, imgHeight * scaleFactor);
+
+          // Save the PDF
+          pdf.save('payment_invoice.pdf'); // Save the PDF with the file name
+      });
+  });
+</script>
+
+
+
+{% endblock extra_js %}

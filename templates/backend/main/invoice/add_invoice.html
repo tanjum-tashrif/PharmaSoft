@@ -1,0 +1,396 @@
+{% extends 'backend/dashboard/main.html' %}
+{% load static %}
+{% block header_resource %}
+<style>
+    .table-responsive {
+        overflow-x: auto;
+        width: 100%;
+    }
+
+    #purchase_table th,
+    #purchase_table td {
+        white-space: nowrap;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row justify-content-center">
+        <div class="col-md-12">
+            <form method="post" id="purchase_form">
+                {% csrf_token %}
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="font-weight-bold">Add New Sell</h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="form-group col-md-6">
+                                <label for="name" class="form-label">Custome Name <span
+                                        class="text-danger">*</span></label>
+                                <input type="text" id="name" name="name" class="form-control">
+                            </div>
+                            <div class="form-group col-md-6">
+                                <label for="invoice_no" class="form-label">Invoice Number <span
+                                        class="text-danger">*</span></label>
+                                <input type="text" id="invoice_no" name="invoice_no" value="{{ invoice_no }}"
+                                    class="form-control" required>
+                            </div>
+                            <div class="form-group col-md-6">
+                                <label for="details" class="form-label">Details <span
+                                        class="text-danger">*</span></label>
+                                <input type="text" id="details" name="details" class="form-control">
+                            </div>
+                            <div class="form-group col-md-6">
+                                <label for="payment_type" class="form-label">
+                                    Payment Type <span class="text-danger">*</span>
+                                </label>
+                                <select name="payment_type" id="payment_type" class="form-control">
+                                    <option value="">Select Payment Type</option>
+                                    {% for key, value in payment_type.items %}
+                                    <option value="{{ key }}">{{ value }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+                        <div class="table-responsive mt-4 mb-0">
+                            <table id="purchase_table" class="table dataTable table-bordered" style="width:100%">
+                                <caption></caption>
+                                <th></th>
+                            </table>
+                        </div>
+                        <div class="p-3 rounded border">
+                            <h4 class="d-flex justify-content-between border-bottom pb-2">Sub Total: <span
+                                    class="text-primary" id="sub_total">0.00</span></h4>
+                            <h4 class="d-flex justify-content-between align-items-center border-bottom pb-2">
+                                Discount :
+                                <span>
+                                    <input type="text" class="form-control pl-5" id="discount"
+                                        placeholder="Discount amount" style="font-size: 1.25rem;">
+                                </span>
+                            </h4>
+                            <h4 class="d-flex justify-content-between border-bottom pb-2">Grand Total: <span
+                                    class="text-success" id="grand_total">0.00</span></h4>
+                            <h4 class="d-flex justify-content-between align-items-center border-bottom pb-2">
+                                Paid Amount:
+                                <span>
+                                    <input type="text" class="form-control pl-5" id="paid_amount"
+                                        placeholder="Enter amount" style="font-size: 1.25rem;">
+                                </span>
+                            </h4>
+                            <h4 class="d-flex justify-content-between">Due Amount: <span class="text-warning"
+                                    id="due_amount">0.00</span></h4>
+                        </div>
+                    </div>
+                    <!-- Hidden inputs to store values that are displayed as spans -->
+                    <input type="hidden" id="hidden_sub_total" name="sub_total">
+                    <input type="hidden" id="hidden_discount" name="discount">
+                    <input type="hidden" id="hidden_grand_total" name="grand_total">
+                    <input type="hidden" id="hidden_paid_amount" name="paid_amount">
+                    <input type="hidden" id="hidden_due_amount" name="due_amount">
+                    <input type="hidden" id="" name="transaction_type" value="{{ transaction_type }}">
+                    <input type="hidden" id="" name="billing_type" value="invoice">
+
+                    <div class="card-footer d-flex justify-content-end">
+                        <a href="" class="btn btn-primary mr-2" id="payment_btn">Payment</a>
+                        <a href="" class="btn btn-secondary" id="save_btn">Save Purchase</a>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock content %}
+
+{% block extra_js %}
+
+<script>
+    // Function to validate input fields
+    function validateField(fieldId, errorMessage) {
+        const field = document.getElementById(fieldId);
+        const formGroup = field.closest('.form-group'); // Find the parent form group
+        
+        // Remove any previous error messages
+        const existingError = formGroup.querySelector('.error-message');
+        if (existingError) {
+            existingError.remove();
+        }
+        field.classList.remove('is-invalid'); // Remove any previous error styles
+
+        // Check if the field is valid
+        if (field.value.trim() === "") {
+            // Add error message
+            const errorElement = document.createElement('div');
+            errorElement.className = 'error-message text-danger mt-1';
+            errorElement.textContent = errorMessage;
+            formGroup.appendChild(errorElement);
+
+            // Highlight the field
+            field.classList.add('is-invalid');
+            return false;
+        }
+        return true;
+    }
+
+    // Handle Payment Button Click
+    document.getElementById('payment_btn').addEventListener('click', function (e) {
+        e.preventDefault();
+
+        const isPaymentTypeValid = validateField('payment_type', 'Please select a payment type.');
+
+        // Only submit the form if all validations pass
+        if (isPaymentTypeValid) {
+            const form = document.getElementById('purchase_form');
+            form.action = "{% url 'purchase_process' %}";
+            form.target = "_blank"; 
+            form.submit();
+        }
+    });
+
+    // Handle Save Purchase Button Click
+    document.getElementById('save_btn').addEventListener('click', function (e) {
+        e.preventDefault();
+
+        const isPaymentTypeValid = validateField('payment_type', 'Please select a payment type.');
+
+        // Only submit the form if all validations pass
+        if (isPaymentTypeValid) {
+            const form = document.getElementById('purchase_form');
+            form.action = "{% url 'save_invoice_data' %}";
+            form.submit();
+        }
+    });
+</script>
+
+<script>
+    $(document).ready(function () {
+    var table = $('#purchase_table').DataTable({
+        dom: "<'row'<'col-sm-12'tr>>",
+        scrollCollapse: true,
+        scrollX: true,
+        scrollY: true,
+        ordering: true,
+        serverSide: false,
+        data: [],
+        columns: [
+            { title: "Medicine Name", data: "medicine_name", orderable: false },
+            { title: "Quantity", data: "quantity", orderable: true },
+            { title: "Per Pc Price", data: "price", orderable: false },
+            { title: "Expire Date", data: "expire_date", orderable: false },
+            { title: "Total Price", data: "total_price", orderable: true },
+            {
+                title: "Action",
+                data: "action",
+                orderable: false,
+                defaultContent: ""
+            }
+        ],
+        pageLength: 10
+    });
+
+    function addRow(isFirstRow = false) {
+        var medicineDropdown = `<select name="medicine_name[]" class="form-control medicine-select">
+                                      <option value="">Select Medicine Name</option>
+                                      {% for med in medicine_name_batch_list %}
+                                          <option value="{{ med.id }}">{{ med.name }}</option>
+                                      {% endfor %}
+                                  </select>`;
+        var actionButtons = isFirstRow
+            ? '<button type="button" class="btn btn-success add-row">+</button>'
+            : '<button type="button" class="btn btn-success add-row">+</button> ' +
+              '<button type="button" class="btn btn-danger delete-row">-</button>';
+
+        table.row.add({
+            'medicine_name': medicineDropdown,
+            'quantity': '<input type="number" name="quantity[]" class="form-control" />',
+            'price': '<input type="number" name="price[]" class="form-control" readonly />',
+            'expire_date': '<input type="text" name="expire_date[]" class="form-control" readonly />',
+            'total_price': '<input type="number" name="total_price[]" class="form-control" readonly />',
+            'action': actionButtons
+        }).draw();
+    }
+
+    function updateTotals() {
+        let subTotal = 0;
+        $('#purchase_table tbody tr').each(function () {
+            var totalPrice = parseFloat($(this).find('input[name="total_price[]"]').val()) || 0;
+            subTotal += totalPrice;
+        });
+
+        $('#sub_total').text(subTotal.toFixed(2));
+        $('#hidden_sub_total').val(subTotal.toFixed(2));
+
+        var discount = parseFloat($('#discount').val()) || 0;
+        var grandTotal = subTotal - discount;
+
+        $('#grand_total').text(grandTotal.toFixed(2));
+        $('#hidden_grand_total').val(grandTotal.toFixed(2));
+
+        var paidAmount = parseFloat($('#paid_amount').val()) || 0;
+        var dueAmount = grandTotal - paidAmount;
+
+        $('#hidden_discount').val(discount.toFixed(2));
+        $('#hidden_paid_amount').val(paidAmount.toFixed(2));
+        $('#hidden_due_amount').val(dueAmount.toFixed(2));
+        $('#due_amount').text(dueAmount.toFixed(2));
+    }
+
+    $('#purchase_table').on('input', 'input[name="quantity[]"], input[name="price[]"]', function () {
+        var row = $(this).closest('tr');
+        var Quantity = parseFloat(row.find('input[name="quantity[]"]').val()) || 0;
+        var Price = parseFloat(row.find('input[name="price[]"]').val()) || 0;
+
+        var totalPrice = Quantity * Price;
+        row.find('input[name="total_price[]"]').val(totalPrice);
+
+        updateTotals();
+    });
+
+    $('#discount, #paid_amount').on('input', function () {
+        updateTotals();
+    });
+
+    $('#purchase_table').on('click', '.delete-row', function () {
+        table.row($(this).closest('tr')).remove().draw();
+        updateTotals();
+    });
+
+    $('#purchase_table').on('click', '.add-row', function () {
+        addRow();
+    });
+
+    // Add the first row without the delete button
+    addRow(true);
+
+    // Handle medicine selection
+    $('#purchase_table').on('change', '.medicine-select', function () {
+        var row = $(this).closest('tr');
+        var medicineId = $(this).val();
+
+        if (medicineId) {
+            $.ajax({
+                url: '/invoice/get_medicine_details/',
+                type: 'GET',
+                data: { medicine_id: medicineId },
+                success: function (response) {
+                    row.find('input[name="price[]"]').val(response.price || '');
+                    row.find('input[name="expire_date[]"]').val(response.expire_date || '');
+                },
+                error: function () {
+                    alert('Failed to fetch medicine details.');
+                }
+            });
+        }
+    });
+});
+
+</script>
+
+
+<!-- <script>
+   $(document).ready(function () {
+    var table = $('#purchase_table').DataTable({
+        dom: "<'row'<'col-sm-12'tr>>",
+        scrollCollapse: true,
+        scrollX: true,
+        scrollY: true,
+        ordering: true,
+        serverSide: false,
+        data: [],
+        columns: [
+            { title: "Medicine Name", data: "medicine_name", orderable: false },
+            { title: "Quantity", data: "quantity", orderable: true },
+            { title: "Price", data: "price", orderable: false },
+            { title: "Total Price", data: "total_price", orderable: true },
+            {
+                title: "Action",
+                data: "action",
+                orderable: false,
+                defaultContent: ""
+            }
+        ],
+        pageLength: 10
+    });
+
+    // Populate medicine dropdown options using the medicines from context
+    
+    function addRow(isFirstRow = false) {
+        var medicineDropdown = `<select name="medicine_name[]" class="form-control">
+                                      <option value="">Select Medicine Name</option>
+                                      {% for med in medicine_name_batch_list %}
+                                          <option value="{{ med.id }}">{{ med.name }}</option>
+                                      {% endfor %}
+                                  </select>`;
+        var actionButtons = isFirstRow
+            ? '<button type="button" class="btn btn-success add-row">+</button>'
+            : '<button type="button" class="btn btn-success add-row">+</button> ' +
+              '<button type="button" class="btn btn-danger delete-row">-</button>';
+
+        table.row.add({
+            'medicine_name': medicineDropdown,
+            'quantity': '<input type="number" name="quantity[]" class="form-control" />',
+            'price': '<input type="number" name="price[]" class="form-control"/>',
+            'total_price': '<input type="number" name="total_price[]" class="form-control" readonly/>',
+            'action': actionButtons
+        }).draw();
+    }
+
+    function updateTotals() {
+        let subTotal = 0;
+        $('#purchase_table tbody tr').each(function () {
+            var totalPrice = parseFloat($(this).find('input[name="total_price[]"]').val()) || 0;
+            subTotal += totalPrice;
+        });
+
+        $('#sub_total').text(subTotal.toFixed(2));
+        $('#hidden_sub_total').val(subTotal.toFixed(2));
+
+        var discount = parseFloat($('#discount').val()) || 0;
+        var grandTotal = subTotal - discount;
+
+        $('#grand_total').text(grandTotal.toFixed(2));
+        $('#hidden_grand_total').val(grandTotal.toFixed(2));
+
+        var paidAmount = parseFloat($('#paid_amount').val()) || 0;
+        var dueAmount = grandTotal - paidAmount;
+
+        $('#hidden_discount').val(discount.toFixed(2));
+        $('#hidden_paid_amount').val(paidAmount.toFixed(2));
+        $('#hidden_due_amount').val(dueAmount.toFixed(2));
+        $('#due_amount').text(dueAmount.toFixed(2));
+    }
+
+    $('#purchase_table').on('input', 'input[name="quantity[]"], input[name="price[]"], input[name="box_mrp[]"]', function () {
+        var row = $(this).closest('tr');
+        var Quantity = parseFloat(row.find('input[name="quantity[]"]').val()) || 0;
+        var Price = parseFloat(row.find('input[name="price[]"]').val()) || 0;
+
+
+        var totalPrice = Quantity * Price;
+        row.find('input[name="total_price[]"]').val(totalPrice);
+
+        updateTotals();
+    });
+
+    $('#discount, #paid_amount').on('input', function () {
+        updateTotals();
+    });
+
+    $('#purchase_table').on('click', '.delete-row', function () {
+        table.row($(this).closest('tr')).remove().draw();
+        updateTotals();
+    });
+
+    $('#purchase_table').on('click', '.add-row', function () {
+        addRow();
+    });
+
+    
+    // Add the first row without the delete button
+    addRow(true);
+});
+
+</script> -->
+
+{% endblock extra_js %}

@@ -1,0 +1,68 @@
+{% extends 'backend/dashboard/main.html' %}
+{% load static %}
+
+{% block content %}
+
+<div class="container-fluid">
+    <div class="row justify-content-center">
+        <div class="col-md-10">
+            <form method="post" id="user_form">
+                {% csrf_token %}
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="font-weight-bold">Add New User</h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="form-group col-md-6">
+                                <div class="form-label text-uppercase">username <span class="text-danger">*</span></div>
+                                <input type="text" name="username" class="form-control required" placeholder="">
+                            </div>
+                            <div class="form-group col-md-6">
+                                <div class="form-label text-uppercase">first name <span class="text-danger">*</span></div>
+                                <input type="text" name="first_name" class="form-control required" placeholder="">
+                            </div>
+                            <div class="form-group col-md-6">
+                                <div class="form-label text-uppercase">last name <span class="text-danger">*</span></div>
+                                <input type="text" name="last_name" class="form-control required" placeholder="">
+                            </div>
+                            <div class="form-group col-md-6">
+                                <div class="form-label text-uppercase">email <span class="text-danger">*</span></div>
+                                <input type="email" name="email" class="form-control required" placeholder="">
+                            </div>
+                            <div class="form-group col-md-6">
+                                <div class="form-label text-uppercase">phone number <span class="text-danger">*</span></div>
+                                <input type="text" name="phone_no" class="form-control required" placeholder="">
+                            </div>
+                            <div class="form-group col-md-6">
+                                <div class="form-label text-uppercase">user role <span class="text-danger">*</span></div>
+                                <select name="user_role" class="form-control required">
+                                    <option value="">Select User Role</option>
+                                    {% for role in roles %}
+                                        <option value="{{ role.id }}">{{ role.name }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            
+                            <div class="form-group col-md-6">
+                                <div class="form-label text-uppercase">password <span class="text-danger">*</span></div>
+                                <input type="password" name="password" class="form-control required" placeholder="">
+                            </div>
+                            <div class="form-group col-md-6">
+                                <div class="form-label text-uppercase">confirm password <span class="text-danger">*</span></div>
+                                <input type="password" name="confirm_password" class="form-control required" placeholder="">
+                            </div>
+                            
+                            <div class="form-group col-md-4 mb-0 mt-3"></div>
+                                <button class="btn btn-sm btn-primary" type="submit" style="width: 30%; margin-top: 20px;">Save</button>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+{% endblock content %}

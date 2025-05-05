@@ -1,0 +1,70 @@
+{% extends 'backend/dashboard/main.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row justify-content-center">
+        <div class="col-md-10">
+            <form method="post" id="user_form">
+                {% csrf_token %}
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="font-weight-bold">Add New Medicine</h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="form-group col-md-6">
+                                <div class="form-label text-uppercase">Medicine Name <span class="text-danger">*</span>
+                                </div>
+                                <input type="text" name="name" class="form-control required" placeholder="">
+                            </div>
+                            <div class="form-group col-md-6">
+                                <div class="form-label text-uppercase">Generic Name</div>
+                                <input type="text" name="generic_name" class="form-control" placeholder="">
+                            </div>
+                            <div class="form-group col-md-6">
+                                <div class="form-label text-uppercase">Strength <span class="text-danger">*</span></div>
+                                <input type="text" name="strength" class="form-control required" placeholder="">
+                            </div>
+                            <div class="form-group col-md-6">
+                                <div class="form-label text-uppercase">Shelf <span class="text-danger">*</span></div>
+                                <input type="text" name="shelf" class="form-control required" placeholder="">
+                            </div>
+                            <div class="form-group col-md-6">
+                                <div class="form-label text-uppercase">Details</div>
+                                <input type="text" name="details" class="form-control" placeholder="">
+                            </div>
+
+                            <!-- Dropdown Selects -->
+                            <div class="form-group col-md-6">
+                                <div class="form-label text-uppercase">category</div>
+                                <select name="category" class="form-control">
+                                    <option value="">Select Supplier</option>
+                                    {% for category in categorys %}
+                                    <option value="{{ category.id }}">{{ category.name }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+
+                            <div class="form-group col-md-6">
+                                <div class="form-label text-uppercase">Supplier</div>
+                                <select name="supplier_name" class="form-control">
+                                    <option value="">Select Supplier</option>
+                                    {% for supplier in suppliers %}
+                                    <option value="{{ supplier.id }}">{{ supplier.name }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+
+                            <div class="form-group col-md-4 mb-0 mt-3"></div>
+                            <button class="btn btn-sm btn-primary" type="submit"
+                                style="width: 30%; margin-top: 20px;">Save</button>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+{% endblock content %}
